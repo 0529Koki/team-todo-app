@@ -1,18 +1,74 @@
 {% load static %}
-<!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>Hello, world!</title>
-    <meta name="description" content="テキストテキストテキスト">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'todo/css/style.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Todo App</title>
+  <link rel="stylesheet" href="{% static 'todo/css/style.css' %}">
 </head>
-
 <body>
-    <h1>Hello, World!</h1>    
-    <P id="message">JavaScriptが働いています!</P>
+  <header class="app-header">
+    <h1>Team Todo App</h1>
+    <nav class="user-nav">
+      <img src="{% static 'images/avatar.png' %}" alt="User Avatar" class="avatar">
+      <span class="username">Admin</span>
+    </nav>
+  </header>
 
-    <script src="{% static 'todo/js/script.js' %}"></script>
+  <div class="app-container">
+    <!-- サイドバー：チームメンバーやカテゴリ切り替えなど -->
+    <aside class="sidebar">
+      <h2>Members</h2>
+      <ul>
+        {% for member in members %}
+        <li><img src="{{ member.avatar_url }}" alt="{{ member.name }}" class="member-avatar"> {{ member.name }}</li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <!-- メインコンテンツ：フォーム＋タスクカード -->
+    <main class="main-content">
+      <section class="task-form">
+        <form method="post" action="{% url 'todo:create' %}">
+          {% csrf_token %}
+          <input type="text" name="title" placeholder="新しいタスクを入力..." required>
+          <input type="date" name="due_date" required>
+          <select name="assignee">
+            {% for member in members %}
+            <option value="{{ member.pk }}">{{ member.name }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">追加</button>
+        </form>
+      </section>
+
+      <section class="task-list">
+        {% for todo in todos %}
+        <article class="task-card {% if todo.completed %}completed{% endif %}">
+          <div class="header">
+            <input type="checkbox" {% if todo.completed %}checked{% endif %} onchange= location.href = "{% url "todo:toggle" todo.pk %}">
+          
+
+            <h3>{{ todo.title }}</h3>
+          </div>
+          <div class="details">
+            <span class="due">期限: {{ todo.due_date|date:'Y-m-d' }}</span>
+            <span class="member">担当: {{ todo.assignee.name }}</span>
+          </div>
+          <div class="actions">
+            <a href="{% url 'todo:edit' todo.pk %}" class="btn edit">編集</a>
+            <a href="{% url 'todo:delete' todo.pk %}" class="btn delete">削除</a>
+          </div>
+        </article>
+        {% empty %}
+        <p class="empty">現在タスクはありません。</p>
+        {% endfor %}
+      </section>
+    </main>
+  </div>
+
+  <footer class="app-footer">
+    <p>&copy; 2025 Team Todo</p>
+  </footer>
 </body>
 </html>
