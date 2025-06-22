@@ -3,20 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <title>編集画面</title>
+  <link rel="stylesheet" href="{% static 'todo/css/detail.css' %}">
 </head>
+
 <body>
-  <h1>タスク編集</h1>
-  <form method="post">
-    {% csrf_token %}
-    <input type="text" name="title" value="{{ todo.title }}" required>
-    <input type="date" name="due_date" value="{{ todo.due_date|date:'Y-m-d' }}" required>
-    <select name="assignee">
-      {% for member in members %}
-        <option value="{{ member.pk }}" {% if member.pk == todo.assignee.pk %}selected{% endif %}>{{ member.name }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit">保存</button>
-  </form>
-  <a href="{% url 'todo:index' %}">戻る</a>
+
+  <header class="app-header">
+    <h1>Team Todo App</h1>
+    <nav class="user-nav">
+      <img src="{% static 'images/avatar.png' %}" alt="User Avatar" class="avatar">
+      <span class="username">Admin</span>
+    </nav>
+  </header>
+
+  <div class="app-container">
+    
+    <!-- サイドバー -->
+    <aside class="sidebar">
+      <h2>Members</h2>
+      <ul>
+        {% for member in members %}
+        <li><img src="{{ member.avatar_url }}" alt="{{ member.name }}" class="member-avatar"> {{ member.name }}</li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <div class="detail-container">
+      <h1>タスク編集</h1>
+      <form method="post">
+        {% csrf_token %}
+        <input type="text" name="title" value="{{ todo.title }}" required>
+        <input type="date" name="due_date" value="{{ todo.due_date|date:'Y-m-d' }}" required>
+        <select name="assignee">
+          {% for member in members %}
+            <option value="{{ member.pk }}" {% if member.pk == todo.assignee.pk %}selected{% endif %}>{{ member.name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">保存</button>
+      </form>
+      <a href="{% url 'todo:index' %}">戻る</a>
+    </div> <!-- ← これが抜けてたかも -->
+
+  </div> <!-- app-container -->
 </body>
 </html>
