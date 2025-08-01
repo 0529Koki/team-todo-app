@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Todo, Member
+from django.shortcuts import render
 
 def index(request):
     todos = Todo.objects.all()
@@ -53,3 +54,11 @@ def delete_task(request, pk):
     todo = get_object_or_404(Todo, pk=pk)
     todo.delete()
     return redirect('todo:index')
+
+def create_task(request):
+    if request.method == 'POST':
+        # フォーム処理をここに書く
+        ...
+    else:
+        members = Member.objects.all()  # メンバー情報が必要な場合
+        return render(request, 'todo/add.html', {'members': members})

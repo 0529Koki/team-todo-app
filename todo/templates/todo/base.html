@@ -38,7 +38,7 @@
             <option value="{{ member.pk }}">{{ member.name }}</option>
             {% endfor %}
           </select>
-          <button type="submit">追加</button>
+          <a href="{% url 'todo:create' %}" class="btn-add">＋ Add Task</a>
         </form>
       </section>
 

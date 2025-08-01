@@ -1,0 +1,73 @@
+{% load static %}
+<html lang="ja">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Team Todo App</title>
+      <link rel="stylesheet" href="{% static 'todo/css/add.css' %}">
+    </head>
+
+<body>
+
+    <header class="app-header">
+        <h1>Team Todo App</h1>
+        <nav class="user-nav">
+          <img src="{% static 'images/avatar.png' %}" alt="User Avatar" class="avatar">
+          <span class="username">Admin</span>
+        </nav>
+      </header>
+    
+      <div class="app-container">
+        
+        <!-- サイドバー：チームメンバーやカテゴリ切り替えなど -->
+        <aside class="sidebar">
+          <h2>Members</h2>
+          <ul>
+            {% for member in members %}
+            <li><img src="{{ member.avatar_url }}" alt="{{ member.name }}" class="member-avatar"> {{ member.name }}</li>
+            {% endfor %}
+          </ul>
+        </aside>
+    
+
+   <section class="add-task">
+    <header class="add-header">
+      <h2>Add New Task</h2>
+      <button class="btn-back">← Back</button>
+    </header>
+    <form class="add-task-form" method="post" action="{% url 'todo:create' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_title">Title</label>
+        <input type="text" id="id_title" name="title" placeholder="Task title" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_assignee">Assignee</label>
+          <select id="id_assignee" name="assignee">
+            {% for member in members %}
+            <option value="{{ member.pk }}">{{ member.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="id_category">Category</label>
+          <select id="id_category" name="category">
+            <option value="development">Development</option>
+            <option value="design">Design</option>
+            <option value="testing">Testing</option>
+            <option value="documentation">Documentation</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="id_due_date">Due Date</label>
+        <input type="date" id="id_due_date" name="due_date" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-save">Save</button>
+        <button type="button" class="btn-cancel" onclick="location.href='{% url 'todo:index' %}'">Cancel</button>
+      </div>
+    </form>
+  </section>
+</body>

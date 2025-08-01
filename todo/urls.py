@@ -9,5 +9,5 @@ urlpatterns = [
     path('toggle/<int:pk>/', views.toggle_task, name='toggle'),
     path('edit/<int:pk>/', views.edit_task, name='edit'),
     path('delete/<int:pk>/', views.delete_task, name='delete'),
-    
+    path('create/', views.create_task, name='create'),
 ]
