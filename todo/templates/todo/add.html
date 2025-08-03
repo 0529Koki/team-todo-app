@@ -33,7 +33,8 @@
    <section class="add-task">
     <header class="add-header">
       <h2>Add New Task</h2>
-      <button class="btn-back">← Back</button>
+      <button class="btn-back" onclick="location.href='{% url 'todo:index' %}'">← Back</button>
+      
     </header>
     <form class="add-task-form" method="post" action="{% url 'todo:create' %}">
       {% csrf_token %}
