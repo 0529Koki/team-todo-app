@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Todo, Member
-from django.shortcuts import render
 
 def index(request):
     todos = Todo.objects.all()
@@ -19,18 +18,28 @@ def create_task(request):
         due_date = request.POST.get('due_date')
         assignee_id = request.POST.get('assignee')
 
-        assignee = get_object_or_404(Member, pk=assignee_id)
-        todo = Todo(title=title, due_date=due_date, assignee=assignee)
-        todo.save()
-        return redirect('todo:index')
-    return redirect('todo:index')
+        if title and due_date and assignee_id:
+            assignee = get_object_or_404(Member, pk=assignee_id)
+            todo = Todo(title=title, due_date=due_date, assignee=assignee)
+            todo.save()
+            return redirect('todo:index')
+        else:
+            # 必要なデータが足りない場合はエラー付きでフォーム再表示
+            members = Member.objects.all()
+            return render(request, 'todo/add.html', {
+                'members': members,
+                'error': 'すべての項目を入力してください。'
+            })
+
+    # GETリクエスト：フォーム表示
+    members = Member.objects.all()
+    return render(request, 'todo/add.html', {'members': members})
 
 def toggle_task(request, pk):
     todo = get_object_or_404(Todo, pk=pk)
     todo.completed = not todo.completed
     todo.save()
     return redirect('todo:index')
-
 
 def edit_task(request, pk):
     todo = get_object_or_404(Todo, pk=pk)
@@ -49,16 +58,7 @@ def edit_task(request, pk):
         'members': members
     })
 
-
 def delete_task(request, pk):
     todo = get_object_or_404(Todo, pk=pk)
     todo.delete()
     return redirect('todo:index')
-
-def create_task(request):
-    if request.method == 'POST':
-        # フォーム処理をここに書く
-        ...
-    else:
-        members = Member.objects.all()  # メンバー情報が必要な場合
-        return render(request, 'todo/add.html', {'members': members})
